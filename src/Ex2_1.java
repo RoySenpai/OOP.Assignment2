@@ -8,7 +8,7 @@ public class Ex2_1 {
     static final String fileSuffix = ".txt";
 
     public static void main(String[] args) {
-        String[] fileNames = createTextFiles(10,(int)(Math.random()*100),999);
+        String[] fileNames = createTextFiles(10000,(int)(Math.random()*100),99999);
         int x;
         long start = System.currentTimeMillis();
         x = getNumOfLines(fileNames);
@@ -95,7 +95,7 @@ public class Ex2_1 {
             threads[i] = new FileThread(fileNames[i]);
 
         for (int i = 0; i < fileNames.length; ++i)
-            threads[i].run();
+            threads[i].start();
 
         for (FileThread thread : threads) {
             try
@@ -125,7 +125,6 @@ public class Ex2_1 {
         for (int i = 0; i < fileNames.length; ++i)
         {
             Callable<Integer> callable = new FileThreadCallable(fileNames[i]);
-            Future<Integer> future = pool.submit(callable);
             list.add(pool.submit(callable));
         }
 
