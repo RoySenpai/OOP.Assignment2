@@ -1,21 +1,25 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.concurrent.Callable;
+package Ex2_1;
 
-public class FileThreadCallable implements Callable<Integer> {
+import java.util.*;
+import java.io.*;
+
+public class FileThread extends Thread {
+
     private final String FileName;
-    public FileThreadCallable(String FileName)
+    private int totalLines;
+    public FileThread(String FileName)
     {
         super();
         this.FileName = FileName;
+        this.totalLines = 0;
+    }
+
+    public int getTotalLines() {
+        return this.totalLines;
     }
 
     @Override
-    public Integer call() throws Exception {
-        int totalLines = 0;
-
+    public void run() {
         try
         {
             File myObj = new File(FileName);
@@ -34,7 +38,5 @@ public class FileThreadCallable implements Callable<Integer> {
         {
             e.printStackTrace();
         }
-
-        return totalLines;
     }
 }

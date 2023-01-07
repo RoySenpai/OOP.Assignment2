@@ -1,3 +1,5 @@
+package Ex2_1;
+
 import java.util.*;
 import java.util.concurrent.*;
 import java.io.*;
@@ -8,9 +10,11 @@ public class Ex2_1 {
     static final String fileSuffix = ".txt";
 
     public static void main(String[] args) {
-        String[] fileNames = createTextFiles(10000,(int)(Math.random()*100),99999);
+        String[] fileNames = createTextFiles(10000,(int)(Math.random()*100),10000);
+
         int x;
         long start = System.currentTimeMillis();
+
         x = getNumOfLines(fileNames);
         System.out.println("[NORMAL] Total lines " + x + ". Time: " + (System.currentTimeMillis() - start) + "ms");
 
@@ -29,33 +33,34 @@ public class Ex2_1 {
 
         int lines;
 
+        System.out.println("Creating " + n +" files with seed " + seed + " and bound " + bound + "...");
+
         for (int i = 1; i <= n; ++i)
         {
-            lines = rand.nextInt(bound);
-
-            fileNames[i-1] = filePrefix + i + fileSuffix;
-
             try
             {
-               FileWriter myWriter = new FileWriter(fileNames[i-1]);
+                lines = rand.nextInt(bound);
 
-               for (int j = 1; j <= lines; ++j)
-                   myWriter.write("Line " + j + "/" + lines + "" + System.getProperty("line.separator"));
+                fileNames[i-1] = filePrefix + i + fileSuffix;
 
-               myWriter.close();
+                FileWriter myWriter = new FileWriter(fileNames[i-1]);
 
-               System.out.println("Created file " + fileNames[i-1] + " with " + lines + " lines.");
+                for (int j = 1; j <= lines; ++j)
+                    myWriter.write("Line " + j + "/" + lines + "" + System.getProperty("line.separator"));
+
+                myWriter.close();
             }
 
-            catch (IOException e)
+            catch (IOException | IllegalArgumentException e)
             {
                 e.printStackTrace();
             }
         }
 
+        System.out.println("Files created successfuly.");
+
         return fileNames;
     }
-
 
     public static int getNumOfLines(String[] fileNames) {
         int sum = 0;
@@ -87,30 +92,29 @@ public class Ex2_1 {
 
         return sum;
     }
+
     public static int getNumOfLinesThreads(String[] fileNames) {
         FileThread[] threads = new FileThread[fileNames.length];
         int sum = 0;
 
         for (int i = 0; i < fileNames.length; ++i)
+        {
             threads[i] = new FileThread(fileNames[i]);
-
-        for (int i = 0; i < fileNames.length; ++i)
             threads[i].start();
+        }
 
-        for (FileThread thread : threads) {
+        for (FileThread thread : threads)
+        {
             try
             {
                 thread.join();
+                sum += thread.getTotalLines();
             }
 
             catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
-        }
-
-        for (FileThread thread : threads) {
-            sum += thread.getTotalLines();
         }
 
         return sum;
@@ -128,10 +132,15 @@ public class Ex2_1 {
             list.add(pool.submit(callable));
         }
 
-        for(Future<Integer> fut : list){
-            try {
+        for (Future<Integer> fut : list)
+        {
+            try
+            {
                 sum += fut.get();
-            } catch (InterruptedException | ExecutionException e) {
+            }
+
+            catch (InterruptedException | ExecutionException e)
+            {
                 e.printStackTrace();
             }
         }
