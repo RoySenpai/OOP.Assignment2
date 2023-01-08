@@ -1,129 +1,32 @@
 package Ex2_2;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
-public class CustomExecutor extends ThreadPoolExecutor {
-
-    /* Some constants to be used. */
-
-    /**
-     * Minimal pool size for the ThreadPoolExecutor object.
-     * By default, half of the number of processors available to the Java virtual machine..
-     */
-    private static final int MINIMUM_POOLSIZE = (Runtime.getRuntime().availableProcessors()/2);
+public class FutureTaskCustom<V> extends FutureTask<V> implements Comparable<FutureTaskCustom> {
 
     /**
-     * Maximal pool size for the ThreadPoolExecutor object.
-     * By default, half of the number of processors available to the Java virtual machine.
+     * The priority of the task.
      */
-    private static final int MAXIMUM_POOLSIZE = (Runtime.getRuntime().availableProcessors()-1);
+    private int priority;
 
     /**
-     * When the number of threads is greater than the core,
-     * this is the maximum time that excess idle threads will wait
-     * for new tasks before terminating.
-     * By default, it's 300ms.
+     * Creates a custom FutureTask that will, upon running, execute the given Callable.
+     * @param callable the callable task
+     * @param priority the priority of the task
      */
-    private static final long KEEP_ALIVE_TIME = 300;
-
-    /**
-     * The time unit for the KEEP_ALIVE_TIME.
-     * Uses the TimeUnit enum.
-     * By default, it's in milliseconds.
-     */
-    private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
-
-    /**
-     * A constant to be used for default priority.
-     */
-    private static final int DEFAULT_PRIORITY = 10;
-
-    /**
-     * Holds the maximum priority task that the
-     * ThreadPoolExecutor executed.
-     */
-    public static int currentMaxPriority = DEFAULT_PRIORITY;
-
-    /**
-     * A constructor.
-     */
-    public CustomExecutor() {
-        super(
-                MINIMUM_POOLSIZE,
-                MAXIMUM_POOLSIZE,
-                KEEP_ALIVE_TIME,
-                TIME_UNIT,
-                new PriorityBlockingQueue<>()
-        );
+    public FutureTaskCustom(Callable<V> callable, int priority) {
+        super(callable);
+        this.priority = priority;
     }
 
     /**
-     * Submits a task to the ThreadPoolExecutor.
-     * @param taskToDo  A Task to execute.
-     * @return a Future representing pending completion of the task.
-     * @throws NullPointerException if a null task is given
+     * Returns the priority of the task.
+     * @return the priority
      */
-    public <V> Future<V> submit(Task<V> taskToDo) throws NullPointerException {
-        if (taskToDo == null)
-            throw new NullPointerException();
-
-        this.currentMaxPriority = Math.min(this.currentMaxPriority, taskToDo.getPriority());
-
-        FutureTaskCustom<V> ftask = new FutureTaskCustom(taskToDo, taskToDo.getPriority());
-        execute(ftask);
-        return ftask;
-    }
-
-    /**
-     * Submits a task to the ThreadPoolExecutor, with given priority.
-     * @param taskToDo  A Task to execute.
-     * @param typeOfTheTask TaskType object that represents the priority of the task.
-     * @return a Future representing pending completion of the task.
-     */
-    public <V> Future<V> submit(Callable<V> taskToDo, TaskType typeOfTheTask) {
-        return this.submit(Task.createTask(taskToDo, typeOfTheTask));
-    }
-
-    /**
-     * Submits a task to the ThreadPoolExecutor, without priority.
-     * @param taskToDo A Task to execute.
-     * @return a Future representing pending completion of the task.
-     */
-    public <V> Future<V> submit(Callable<V> taskToDo) {
-        return this.submit(Task.createTask(taskToDo));
-    }
-
-
-    @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        super.afterExecute(r, t);
-
-        if (super.getQueue().isEmpty()) {
-            this.currentMaxPriority = DEFAULT_PRIORITY;
-        }
-
-        else {
-            FutureTaskCustom task = (FutureTaskCustom)super.getQueue().peek();
-            this.currentMaxPriority = ((task != null) ? task.getPriority():DEFAULT_PRIORITY);
-        }
-    }
-
-    /**
-     * Shutdowns the ThreadPoolExecutor.
-     */
-    public void gracefullyTerminate() {
-        super.shutdown();
-    }
-
-    /**
-     * Returns the maximum priority task that the
-     * ThreadPoolExecutor executed.
-     * @return maximum priority task.
-     */
-    public int getCurrentMax() {
-        return this.currentMaxPriority;
+    public int getPriority() {
+        return this.priority;
     }
 
     /**
@@ -225,11 +128,25 @@ public class CustomExecutor extends ThreadPoolExecutor {
     }
 
     /**
-     * Returns the number of tasks that are waiting to be executed.
-     * @return number of tasks that are waiting to be executed.
+     * Compares this object with the specified object for order.
+     * @param o the object to be compared.
+     * @return  a negative integer, zero, or a positive integer as this object is
+     * less than, equal to, or greater than the specified object.
+     */
+    @Override
+    public int compareTo(FutureTaskCustom o) {
+        return (this.priority < o.getPriority()) ? -1:(this.priority > o.getPriority()) ? 1:0;
+    }
+
+    /**
+     * Returns a string representation of the object.
+     * In general, the {@code toString} method returns a string that
+     * "textually represents" this object. The result should be a concise but
+     * informative representation that is easy for a person to read.
+     * @return a string representation of the object.
      */
     @Override
     public String toString() {
-        return "Queue size: " + super.getQueue().size() + "; Current max priority: " + this.currentMaxPriority;
+        return "" + this.priority;
     }
 }

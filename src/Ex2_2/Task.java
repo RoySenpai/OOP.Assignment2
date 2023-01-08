@@ -87,11 +87,6 @@ public class Task<V> implements Callable<V>, Comparable<Task<V>> {
      */
     @Override
     public V call() throws Exception {
-        if (CustomExecutor.BlockingQueue.isEmpty())
-            CustomExecutor.currentMaxPriority = 10;
-        else
-            CustomExecutor.currentMaxPriority = ((Task)CustomExecutor.BlockingQueue.peek()).getPriority();
-
         return this.taskToDo.call();
     }
 
