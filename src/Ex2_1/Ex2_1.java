@@ -6,26 +6,9 @@ import java.io.*;
 
 public class Ex2_1 {
 
-    static final String filePrefix = "file_";
-    static final String fileSuffix = ".txt";
+    public static final String filePrefix = "file_";
+    public static final String fileSuffix = ".txt";
 
-    public static void main(String[] args) {
-        String[] fileNames = createTextFiles(10000,(int)(Math.random()*100),10000);
-
-        int x;
-        long start = System.currentTimeMillis();
-
-        x = getNumOfLines(fileNames);
-        System.out.println("[NORMAL] Total lines " + x + ". Time: " + (System.currentTimeMillis() - start) + "ms");
-
-        start = System.currentTimeMillis();
-        x = getNumOfLinesThreads(fileNames);
-        System.out.println("[THREAD] Total lines " + x + ". Time: " + (System.currentTimeMillis() - start) + "ms");
-
-        start = System.currentTimeMillis();
-        x = getNumOfLinesThreadPool(fileNames);
-        System.out.println("[THREAD POOL] Total lines " + x + ". Time: " + (System.currentTimeMillis() - start) + "ms");
-    }
     public static String[] createTextFiles(int n, int seed, int bound){
         String[] fileNames = new String[n];
 
@@ -57,7 +40,7 @@ public class Ex2_1 {
             }
         }
 
-        System.out.println("Files created successfuly.");
+        System.out.println("Files created successfully.");
 
         return fileNames;
     }
@@ -93,7 +76,7 @@ public class Ex2_1 {
         return sum;
     }
 
-    public static int getNumOfLinesThreads(String[] fileNames) {
+    public int getNumOfLinesThreads(String[] fileNames) {
         FileThread[] threads = new FileThread[fileNames.length];
         int sum = 0;
 
@@ -120,7 +103,7 @@ public class Ex2_1 {
         return sum;
     }
 
-    public static int getNumOfLinesThreadPool(String[] fileNames) {
+    public int getNumOfLinesThreadPool(String[] fileNames) {
         ExecutorService pool = Executors.newFixedThreadPool(fileNames.length);
         List<Future<Integer>> list = new ArrayList<Future<Integer>>();
 

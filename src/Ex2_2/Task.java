@@ -4,25 +4,49 @@ import java.util.concurrent.Callable;
 
 public class Task<V> implements Callable<V>, Comparable<Task<V>> {
 
+    /**
+     * A constant to be used for default priority.
+     */
+    private static final int DEFAULT_PRIORITY = 5;
+
     private Callable<V> taskToDo;
     private int priority;
+
+    /**
+     * A constructor (PRIVATE).
+     * @param taskToDo  Callable method of task to do.
+     * @param typeOfTheTask Task priority.
+     */
     private Task(Callable<V> taskToDo, TaskType typeOfTheTask) {
         this.taskToDo = taskToDo;
         this.priority = typeOfTheTask.getPriorityValue();
     }
-    private Task(Callable<V> taskToDo) {
-        this.taskToDo = taskToDo;
-        this.priority = 0;
-    }
 
+    /**
+     * Creates a new task
+     * @param taskToDo  Callable method of task to do.
+     * @param typeOfTheTask Task priority.
+     * @return a Task object.
+     */
     public static Task createTask(Callable taskToDo, TaskType typeOfTheTask) {
         return new Task(taskToDo, typeOfTheTask);
     }
 
+    /**
+     * Creates a new task, with default priority.
+     * @param taskToDo  Callable method of task to do.
+     * @return a Task object.
+     */
     public static Task createTask(Callable taskToDo) {
-        return new Task(taskToDo);
+        TaskType t = TaskType.OTHER;
+        t.setPriority(DEFAULT_PRIORITY);
+        return new Task(taskToDo, t);
     }
 
+    /**
+     * Returns the current priority of the task.
+     * @return  current priority.
+     */
     public int getPriority() {
         return priority;
     }
@@ -43,10 +67,7 @@ public class Task<V> implements Callable<V>, Comparable<Task<V>> {
      */
     @Override
     public int compareTo(Task<V> o) {
-        if (this.priority == o.priority)
-            return 0;
-
-        return ((this.priority < o.priority) ? -1:1);
+        return (o.priority - this.priority);
     }
 
     /**

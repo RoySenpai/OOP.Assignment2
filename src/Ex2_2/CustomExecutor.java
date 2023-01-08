@@ -1,8 +1,9 @@
 package Ex2_2;
 
+import java.util.Comparator;
 import java.util.concurrent.*;
 
-public class CustomExecutor {
+public class CustomExecutor extends ThreadPoolExecutor {
 
     /* Some constants to be used. */
 
@@ -10,13 +11,13 @@ public class CustomExecutor {
      * Minimal pool size for the ThreadPoolExecutor object.
      * By default, half of the number of processors available to the Java virtual machine..
      */
-    public static final int MINIMUM_POOLSIZE = (Runtime.getRuntime().availableProcessors()/2);
+    private static final int MINIMUM_POOLSIZE = (Runtime.getRuntime().availableProcessors()/2);
 
     /**
      * Maximal pool size for the ThreadPoolExecutor object.
      * By default, half of the number of processors available to the Java virtual machine.
      */
-    public static final int MAXIMUM_POOLSIZE = (Runtime.getRuntime().availableProcessors()/2);
+    private static final int MAXIMUM_POOLSIZE = (Runtime.getRuntime().availableProcessors()-1);
 
     /**
      * When the number of threads is greater than the core,
@@ -24,44 +25,56 @@ public class CustomExecutor {
      * for new tasks before terminating.
      * By default, it's 300ms.
      */
-    public static final long KEEP_ALIVE_TIME = 300;
+    private static final long KEEP_ALIVE_TIME = 300;
 
     /**
      * The time unit for the KEEP_ALIVE_TIME.
      * Uses the TimeUnit enum.
      * By default, it's in milliseconds.
      */
-    public static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
-
-    public static final int DEFAULT_INIT_SIZE = 11;
-
-    /* Actual */
+    private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
 
     /**
-     * The ThreadPoolExecutor object that this class uses.
+     * A constant to be used for default priority.
      */
-    private final ThreadPoolExecutor poolOfThreads = new ThreadPoolExecutor(
-                MINIMUM_POOLSIZE,
-                MAXIMUM_POOLSIZE,
-                KEEP_ALIVE_TIME,
-                TIME_UNIT,
-                new PriorityBlockingQueue<>(DEFAULT_INIT_SIZE, new PriorityTaskComparator())
-    );
+    private static final int DEFAULT_PRIORITY = 10;
+
+    /**
+     * Used for the queue of the ThreadPoolExecutor.
+     */
+    private static PriorityBlockingQueue<Runnable> BlockingQueue = new PriorityBlockingQueue<>(
+                                                                        MINIMUM_POOLSIZE,
+                                                                        (o1, o2) -> ((Task)o1).compareTo((Task)o2)
+                                                                    );
 
     /**
      * Holds the maximum priority task that the
      * ThreadPoolExecutor executed.
      */
-    private int currentMaxPriority = Integer.MIN_VALUE;
+    private int currentMaxPriority = DEFAULT_PRIORITY;
+
+    /**
+     * A constructor.
+     */
+    public CustomExecutor() {
+        super(
+                MINIMUM_POOLSIZE,
+                MAXIMUM_POOLSIZE,
+                KEEP_ALIVE_TIME,
+                TIME_UNIT,
+                BlockingQueue
+        );
+    }
 
     /**
      * Submits a task to the ThreadPoolExecutor.
      * @param taskToDo  A Task to execute.
      * @return a Future representing pending completion of the task.
+     * @throws NullPointerException if a null task is given
      */
     public <V> Future<V> submit(Task<V> taskToDo) {
-        this.currentMaxPriority = Math.max(currentMaxPriority, taskToDo.getPriority());
-        return this.poolOfThreads.submit(taskToDo);
+        this.currentMaxPriority = Math.min(this.currentMaxPriority, taskToDo.getPriority());
+        return super.submit(taskToDo);
     }
 
     /**
@@ -87,8 +100,28 @@ public class CustomExecutor {
      * Shutdowns the ThreadPoolExecutor.
      */
     public void gracefullyTerminate() {
-        this.poolOfThreads.shutdown();
+        super.shutdown();
     }
+
+    /*@Override
+    protected void afterExecute(Runnable r, Throwable t) {
+        super.afterExecute(r,t);
+
+        if (BlockingQueue.isEmpty())
+        {
+            this.currentMaxPriority = DEFAULT_PRIORITY;
+            return;
+        }
+
+        RunnableFuture rn = (RunnableFuture)r;
+
+        Task task = (Task)rn;
+
+        int nextPriority = ((Task)BlockingQueue.peek()).getPriority();
+
+        if (task.getPriority() < nextPriority)
+            this.currentMaxPriority = nextPriority;
+    }*/
 
     /**
      * Returns the maximum priority task that the
@@ -96,6 +129,14 @@ public class CustomExecutor {
      * @return maximum priority task.
      */
     public int getCurrentMax() {
+        /*Runnable runnableTask = BlockingQueue.peek();
+
+        if (runnableTask == null)
+            this.currentMaxPriority = DEFAULT_PRIORITY;
+
+        else
+            this.currentMaxPriority=((Task)runnableTask).getPriority();*/
+
         return this.currentMaxPriority;
     }
 }
