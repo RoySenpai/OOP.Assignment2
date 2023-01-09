@@ -75,7 +75,7 @@ public class Task<V> extends FutureTask<V> implements Callable<V>, Comparable<Ta
      */
     @Override
     public int compareTo(Task o) {
-        return -Integer.compare(this.priority, o.getPriority());
+        return Integer.compare(this.priority, o.getPriority());
     }
 
     /**

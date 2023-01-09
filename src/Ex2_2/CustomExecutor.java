@@ -63,12 +63,12 @@ public class CustomExecutor extends ThreadPoolExecutor {
      * @return a Future representing pending completion of the task.
      * @throws NullPointerException if a null task is given
      */
-    public <V> Future<V> submit(Task<V> taskToDo) throws NullPointerException {
+    public <V> Future<V> submit(Task<V> taskToDo) {
         if (taskToDo == null)
             throw new NullPointerException();
 
         this.currentMaxPriority = Math.min(this.currentMaxPriority, taskToDo.getPriority());
-        execute(taskToDo);
+        super.execute(taskToDo);
         return taskToDo;
     }
 

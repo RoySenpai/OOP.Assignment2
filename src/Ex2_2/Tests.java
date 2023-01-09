@@ -70,4 +70,30 @@ public class Tests {
 		logger.info(()-> "Current maximum priority = " + customExecutor.getCurrentMax());
 		customExecutor.gracefullyTerminate();
 	}
+
+	@Test
+	public void Tests2() {
+		CustomExecutor customExecutor = new CustomExecutor();
+
+		for (int i = 0; i < 100; ++i)
+		{
+			Callable<Double> callable1 = () -> {
+				return 1000 * Math.pow(1.02, 5);
+			};
+
+			Callable<String> callable2 = () -> {
+				StringBuilder sb = new StringBuilder("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+				return sb.reverse().toString();
+			};
+
+			customExecutor.submit(() -> {
+				return 1000 * Math.pow(1.02, 5);
+			}, TaskType.COMPUTATIONAL);
+
+			customExecutor.submit(callable1, TaskType.OTHER);
+
+			customExecutor.submit(callable2, TaskType.IO);
+		}
+
+	}
 }
