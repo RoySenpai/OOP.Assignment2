@@ -2,13 +2,14 @@ package Ex2_2;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
-public class Task<V> implements Callable<V>, Comparable<Task<V>> {
+public class Task<V> extends FutureTask<V> implements Callable<V>, Comparable<Task> {
 
     /**
      * A constant to be used for default priority.
      */
-    private static final int DEFAULT_PRIORITY = 5;
+    private static final TaskType DEFAULT_PRIORITY = TaskType.OTHER;
 
     /**
      * Task to do.
@@ -26,6 +27,7 @@ public class Task<V> implements Callable<V>, Comparable<Task<V>> {
      * @param typeOfTheTask Task priority.
      */
     private Task(Callable<V> taskToDo, TaskType typeOfTheTask) {
+        super(taskToDo);
         this.taskToDo = taskToDo;
         this.priority = typeOfTheTask.getPriorityValue();
     }
@@ -46,9 +48,7 @@ public class Task<V> implements Callable<V>, Comparable<Task<V>> {
      * @return a Task object.
      */
     public static Task createTask(Callable taskToDo) {
-        TaskType t = TaskType.OTHER;
-        t.setPriority(DEFAULT_PRIORITY);
-        return new Task(taskToDo, t);
+        return new Task(taskToDo, DEFAULT_PRIORITY);
     }
 
     /**
@@ -74,8 +74,8 @@ public class Task<V> implements Callable<V>, Comparable<Task<V>> {
      * @throws NullPointerException if the specified object is null
      */
     @Override
-    public int compareTo(Task<V> o) {
-        return (o.priority - this.priority);
+    public int compareTo(Task o) {
+        return -Integer.compare(this.priority, o.getPriority());
     }
 
     /**

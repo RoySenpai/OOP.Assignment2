@@ -6,8 +6,6 @@ import java.util.concurrent.*;
 
 public class CustomExecutor extends ThreadPoolExecutor {
 
-    /* Some constants to be used. */
-
     /**
      * Minimal pool size for the ThreadPoolExecutor object.
      * By default, half of the number of processors available to the Java virtual machine..
@@ -47,7 +45,7 @@ public class CustomExecutor extends ThreadPoolExecutor {
     public static int currentMaxPriority = DEFAULT_PRIORITY;
 
     /**
-     * A constructor.
+     * An empty constructor that initialize a ThreadPoolExecutor.
      */
     public CustomExecutor() {
         super(
@@ -70,10 +68,8 @@ public class CustomExecutor extends ThreadPoolExecutor {
             throw new NullPointerException();
 
         this.currentMaxPriority = Math.min(this.currentMaxPriority, taskToDo.getPriority());
-
-        FutureTaskCustom<V> ftask = new FutureTaskCustom(taskToDo, taskToDo.getPriority());
-        execute(ftask);
-        return ftask;
+        execute(taskToDo);
+        return taskToDo;
     }
 
     /**
@@ -96,18 +92,24 @@ public class CustomExecutor extends ThreadPoolExecutor {
     }
 
 
+    /**
+     * This method executed after a task have been executed.
+     * @param r the runnable that has completed
+     * @param t the exception that caused termination, or null if
+     * execution completed normally
+     */
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
 
-        if (super.getQueue().isEmpty()) {
+        if (super.getQueue().isEmpty())
+        {
             this.currentMaxPriority = DEFAULT_PRIORITY;
+            return;
         }
 
-        else {
-            FutureTaskCustom task = (FutureTaskCustom)super.getQueue().peek();
-            this.currentMaxPriority = ((task != null) ? task.getPriority():DEFAULT_PRIORITY);
-        }
+        Task task = (Task)super.getQueue().peek();
+        this.currentMaxPriority = ((task != null) ? task.getPriority():DEFAULT_PRIORITY);
     }
 
     /**
