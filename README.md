@@ -97,3 +97,6 @@ implements the RunnableFuture interface. For its constructor, we pass a Task
 object (Callable object) and a priority. The class also implements the Comparable
 interface, so we can compare between tasks by their priority, and the comparison is
 used by the priority queue itself that's passed to the ThreadPoolExecutor object.
+
+### Tests
+Tests that we made.
