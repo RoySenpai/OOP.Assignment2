@@ -93,6 +93,8 @@ public class Tests {
 			customExecutor.submit(callable1, TaskType.OTHER);
 
 			customExecutor.submit(callable2, TaskType.IO);
+
+			System.out.println(customExecutor.getQueue().toString());
 		}
 
 	}

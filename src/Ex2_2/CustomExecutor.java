@@ -104,7 +104,7 @@ public class CustomExecutor extends ThreadPoolExecutor {
 
         if (super.getQueue().isEmpty())
         {
-            this.currentMaxPriority = DEFAULT_PRIORITY;
+            this.currentMaxPriority = ((Task)r).getPriority();
             return;
         }
 

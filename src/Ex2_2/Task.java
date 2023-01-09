@@ -193,6 +193,6 @@ public class Task<V> extends FutureTask<V> implements Callable<V>, Comparable<Ta
      * @return a string representation of the object.
      */
     public String toString() {
-        return "Task with priority " + this.priority;
+        return "(Priority=" + this.priority + ")";
     }
 }
