@@ -1,6 +1,5 @@
 package Ex2_2;
 
-import org.junit.jupiter.api.*;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import java.util.concurrent.*;
@@ -94,8 +93,58 @@ public class Tests {
 
 			customExecutor.submit(callable2, TaskType.IO);
 
-			System.out.println(customExecutor.getQueue().toString());
+			System.out.println(customExecutor);
 		}
 
+		System.out.println(customExecutor);
+		customExecutor.gracefullyTerminate();
+
+	}
+
+	@org.junit.jupiter.api.Test
+	public void Tests3() {
+		CustomExecutor customExecutor = new CustomExecutor();
+
+		for (int i = 0; i < 1000; ++i)
+		{
+			int finalI = i;
+			Callable<Integer> callable1 = () -> {
+				return finalI;
+			};
+
+			int rnd = (int)(Math.random() * 3);
+
+			switch (rnd)
+			{
+				case 0:
+				{
+					customExecutor.submit(callable1, TaskType.COMPUTATIONAL);
+					customExecutor.submit(callable1, TaskType.IO);
+					customExecutor.submit(callable1, TaskType.OTHER);
+					break;
+				}
+
+				case 1:
+				{
+										customExecutor.submit(callable1, TaskType.IO);
+					customExecutor.submit(callable1, TaskType.COMPUTATIONAL);
+					customExecutor.submit(callable1, TaskType.OTHER);
+					break;
+				}
+
+				case 2:
+				{
+					customExecutor.submit(callable1, TaskType.OTHER);
+					customExecutor.submit(callable1, TaskType.COMPUTATIONAL);
+					customExecutor.submit(callable1, TaskType.IO);
+					break;
+				}
+			}
+
+			logger.info(()-> customExecutor.toString());
+		}
+
+		logger.info(()-> customExecutor.toString());
+		customExecutor.gracefullyTerminate();
 	}
 }
