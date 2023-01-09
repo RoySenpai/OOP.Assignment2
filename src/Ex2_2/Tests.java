@@ -1,6 +1,6 @@
 package Ex2_2;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import java.util.concurrent.*;
@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 public class Tests {
 	public static final Logger logger = LoggerFactory.getLogger(Tests.class);
 
-	@Test
+    @org.junit.jupiter.api.Test
 	public void partialTest(){
 		CustomExecutor customExecutor = new CustomExecutor();
 
@@ -71,7 +71,7 @@ public class Tests {
 		customExecutor.gracefullyTerminate();
 	}
 
-	@Test
+    @org.junit.jupiter.api.Test
 	public void Tests2() {
 		CustomExecutor customExecutor = new CustomExecutor();
 
