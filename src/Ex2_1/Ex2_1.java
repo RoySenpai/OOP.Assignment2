@@ -9,6 +9,13 @@ public class Ex2_1 {
     public static final String filePrefix = "file_";
     public static final String fileSuffix = ".txt";
 
+    /**
+     * Creates text files with random number of lines.
+     * @param n Number of files to create.
+     * @param seed a starting seed for number of lines.
+     * @param bound max number of lines per file.
+     * @return an array with the names of the files created.
+     */
     public static String[] createTextFiles(int n, int seed, int bound){
         String[] fileNames = new String[n];
 
@@ -45,6 +52,12 @@ public class Ex2_1 {
         return fileNames;
     }
 
+    /**
+     * Reads the number of lines of given array of text files,
+     * in a linear way.
+     * @param fileNames array that contains the file names.
+     * @return number of total lines read.
+     */
     public static int getNumOfLines(String[] fileNames) {
         int sum = 0;
         for (int i = 0; i < fileNames.length; ++i)
@@ -76,6 +89,12 @@ public class Ex2_1 {
         return sum;
     }
 
+    /**
+     * Reads the number of lines of given array of text files,
+     * using threads.
+     * @param fileNames array that contains the file names.
+     * @return number of total lines read.
+     */
     public int getNumOfLinesThreads(String[] fileNames) {
         FileThread[] threads = new FileThread[fileNames.length];
         int sum = 0;
@@ -103,6 +122,12 @@ public class Ex2_1 {
         return sum;
     }
 
+    /**
+     * Reads the number of lines of given array of text files,
+     * using a thread pool.
+     * @param fileNames array that contains the file names.
+     * @return number of total lines read.
+     */
     public int getNumOfLinesThreadPool(String[] fileNames) {
         ExecutorService pool = Executors.newFixedThreadPool(fileNames.length);
         List<Future<Integer>> list = new ArrayList<Future<Integer>>();

@@ -55,7 +55,8 @@ an object which represent a thread for the "getNumOfLinesThreadPool"
 function in Ex2_1 and that thread is sum the number of lines in the text.
 
 ### Tests
-Tests that we made.
+Tests that we made. We concluded based on the testes that using threads is faster
+than using ThreadPool and using ThreadPool is faster than not using threads at all.
 
 ## The second part – Ex2_2:
 In java, we cannot give a priority to an asynchronous task, java give the

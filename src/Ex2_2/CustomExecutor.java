@@ -1,7 +1,6 @@
 package Ex2_2;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.concurrent.*;
 
 public class CustomExecutor extends ThreadPoolExecutor {
@@ -91,6 +90,7 @@ public class CustomExecutor extends ThreadPoolExecutor {
      * @param taskToDo A Task to execute.
      * @return a Future representing pending completion of the task.
      */
+    @Override
     public <V> Future<V> submit(Callable<V> taskToDo) {
         return this.submit(Task.createTask(taskToDo));
     }
@@ -150,7 +150,7 @@ public class CustomExecutor extends ThreadPoolExecutor {
      */
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        return (this == obj);
     }
 
     /**

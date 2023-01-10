@@ -1,8 +1,6 @@
 package Ex2_2;
 
-import java.util.HashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 public class Task<V> implements Callable<V>, Comparable<Task<V>> {
 

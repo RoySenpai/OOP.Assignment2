@@ -1,19 +1,27 @@
 package Ex2_1;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.concurrent.Callable;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class FileThreadCallable implements Callable<Integer> {
     private final String FileName;
+
+    /**
+     * Constructor.
+     * @param FileName a string representing the name of the file to be read.
+     */
     public FileThreadCallable(String FileName)
     {
         super();
         this.FileName = FileName;
     }
 
+    /**
+     * Call method
+     * @return total number of lines read from the file.
+     * @throws Exception for errors
+     */
     @Override
     public Integer call() throws Exception {
         int totalLines = 0;

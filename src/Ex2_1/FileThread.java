@@ -7,6 +7,11 @@ public class FileThread extends Thread {
 
     private final String FileName;
     private int totalLines;
+
+    /**
+     * Constructor.
+     * @param FileName a string representing the name of the file to be read.
+     */
     public FileThread(String FileName)
     {
         super();
@@ -14,10 +19,17 @@ public class FileThread extends Thread {
         this.totalLines = 0;
     }
 
+    /**
+     * Returns the total number of lines read from the file.
+     * @return number of lines.
+     */
     public int getTotalLines() {
         return this.totalLines;
     }
 
+    /**
+     * Run method.
+     */
     @Override
     public void run() {
         try
